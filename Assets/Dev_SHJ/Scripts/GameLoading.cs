@@ -8,6 +8,9 @@ namespace SHJ
 {
     public class GameLoading : MonoBehaviour
     {
+        public delegate void LoginCallback();
+        public static event LoginCallback loginCallback;
+        
         [SerializeField] private TMP_InputField username;
         [SerializeField] private TMP_InputField password;
 
@@ -45,6 +48,7 @@ namespace SHJ
             if (res.result == UnityWebRequest.Result.Success)
             {
                 sToken = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                loginCallback?.Invoke();
             }
         }
     }
