@@ -7,4 +7,6 @@ public class ReadmeSTO : ScriptableObject
     public string gameMain1Camera = string.Empty;
     public string gameMain2Camera = string.Empty;
     public string gamePlayCamera = string.Empty;
+    
+    public string scenario = string.Empty;
 }

@@ -54,6 +54,11 @@ public class ReadmeEditor: Editor
         GUILayout.Label("파일 이름", m_HeadingStyle);
         GUILayout.Label("ex) 머테리얼을 만든다 성이니셜M자유", m_BodyStyle);
         
+        GUILayout.Space(16);
+        GUILayout.Label("게임 시나리오", m_HeadingStyle);
+        SerializedProperty scenario = serializedObject.FindProperty("scenario");
+        scenario.stringValue = EditorGUILayout.TextArea(scenario.stringValue, EditorStyles.textArea);
+        
         serializedObject.ApplyModifiedProperties();
     }
 }
