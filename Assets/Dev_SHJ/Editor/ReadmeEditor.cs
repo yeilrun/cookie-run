@@ -21,6 +21,17 @@ public class ReadmeEditor: Editor
         GUILayout.Label("Readme", m_TitleStyle);
         GUILayout.Space(16);
         GUILayout.Label("변수", m_HeadingStyle);
-        GUILayout.Label("ex) ", m_BodyStyle);
+        GUILayout.Label("ex) strDailyUserTable", m_BodyStyle);
+        
+        GUILayout.Space(16);
+        GUILayout.Label("네임스페이스", m_HeadingStyle);
+        GUILayout.Label("namespace {}", m_BodyStyle);
+        
+        GUILayout.Space(16);
+        GUILayout.Label("카메라 시야", m_HeadingStyle);
+        
+        GUILayout.Space(16);
+        GUILayout.Label("머테리얼 이름", m_HeadingStyle);
+        GUILayout.Label("ex) 머테리얼을 만든다 성M자유", m_BodyStyle);
     }
 }
