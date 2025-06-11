@@ -5,18 +5,21 @@ namespace LHA {
     {
 
         private int jumpCount = 0;
-        private int jumpForce = 250;
+        private float jumpTime = 0f;
+        private float jumpVelocity = 13f;
+        private float gravity = -25f;
+        private bool isJumping = false;
+        private float startY = 0f;
+        private LayerMask groundLayer;
         //private bool isGrounded = false;
         //private bool isDead = false;
         //private bool isSliding = true;
         //private bool isClashed = true;
-
-        private Rigidbody2D playerRigidbody;
         //private Animator animator;
 
         private void Start()
         {
-            playerRigidbody = GetComponent<Rigidbody2D>();
+            groundLayer = LayerMask.GetMask("Ground");
             //animator = GetComponent<Animator>();
         }
 
@@ -34,7 +37,7 @@ namespace LHA {
         {
             //animator.SetTrigger("Die");
 
-            playerRigidbody.linearVelocity = Vector2.zero;
+            //playerRigidbody.linearVelocity = Vector2.zero;
             //isDead = true;
         }
 
@@ -59,8 +62,6 @@ namespace LHA {
                 //animator.SetBool("Clash", !isClashed);
             }
         }
-
-
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -94,20 +95,45 @@ namespace LHA {
 
         private void Jumping()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow) && jumpCount < 2)
+            if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 2)
             {
                 jumpCount++;
-                playerRigidbody.linearVelocity = Vector3.zero;
+                jumpTime = 0f;
+                startY = transform.position.y;
+                isJumping = true;
+            }
 
-                this.playerRigidbody.AddForce(new Vector3(0, jumpForce, 0));
+            if (isJumping)
+            {
+                jumpTime += Time.deltaTime;
+                float newY = startY + jumpVelocity * jumpTime + 0.5f * gravity * Mathf.Pow(jumpTime, 2);
+                transform.position = new Vector2(transform.position.x, newY);
 
-                if (jumpCount == 2)
+                if (gravity * jumpTime + jumpVelocity <= 0f && IsGrounded())
                 {
-                    //animator.SetTrigger("DoubleJump");
+                    transform.position = new Vector2(transform.position.x, transform.position.y);
+                    //transform.position = new Vector2(transform.position.x, Mathf.Round(transform.position.y * 100f) / 100f);
+                    isJumping = false;
                 }
+
+            }
+
+            if (!isJumping && IsGrounded())
+            {
+                jumpCount = 0;
+            }
+
+            if (jumpCount == 2)
+            {
+                    //animator.SetTrigger("DoubleJump");
             }
         }
 
+        private bool IsGrounded()
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, groundLayer);
+            return hit.collider != null;
+        }
 
     }
 }
