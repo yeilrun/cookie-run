@@ -28,7 +28,6 @@ public class LoadingMainGameManager : MonoBehaviour
 
     public void OnClickRotateItemList(bool b)
     {
-        Time.timeScale = 0.005f;
         StartCoroutine(LoopScaleRotate(b));
     }
 
@@ -41,8 +40,7 @@ public class LoadingMainGameManager : MonoBehaviour
         Quaternion originRot = targetGo.transform.localRotation;
         
         Vector3 s = targetGo.transform.localScale;
-        // Quaternion r = itemListGo.transform.rotation;
-        float t = Time.deltaTime * 8;
+        float t = Time.deltaTime * 10;
         float r = targetGo.transform.rotation.y;
         for (int i = 0; i < 80; ++i)
         {
