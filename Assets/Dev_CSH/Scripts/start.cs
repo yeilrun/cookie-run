@@ -1,6 +1,16 @@
 using UnityEngine;
-
-public class start : MonoBehaviour
+namespace CSH
 {
-    
+   
+    public class start : MonoBehaviour
+    {
+        public void Awake()
+        {
+
+        }
+
+        //public void 
+    }
+
 }
+
