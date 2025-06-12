@@ -7,6 +7,7 @@ public class LoadingMainGameManager : MonoBehaviour
 {
     [SerializeField] private GameObject loading;
     [SerializeField] private GameObject main1;
+    [SerializeField] private GameObject topMain;
 
     [SerializeField] private GameObject itemListGo;
     [SerializeField] private GameObject rankListGo;
@@ -25,6 +26,7 @@ public class LoadingMainGameManager : MonoBehaviour
     {
         loading.SetActive(false);
         main1.SetActive(true);
+        topMain.SetActive(true);
         GameMainFirst gameMainFirst = main1.GetComponent<GameMainFirst>();
         GameLoading gameLoding = loading.GetComponent<GameLoading>();
         gameMainFirst.GetDataRequest(gameLoding.sToken.token);
