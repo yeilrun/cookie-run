@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace LHA {
-    public class CookieController : MonoBehaviour
+    public class P_CookieController : MonoBehaviour
     {
 
         private int jumpCount = 0;
