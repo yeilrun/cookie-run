@@ -39,9 +39,9 @@ public class LoadingMainGameManager : MonoBehaviour
         Quaternion originRot = Quaternion.identity;
         WaitForSeconds wait  = new WaitForSeconds(0.01f);
         // 작아진다
-        float s_sub = 0.1f;
-        float r_plus = 4f;
-        for (int i = 0; i < 15; ++i)
+        float s_sub = 0.06f;
+        float r_plus = 6f;
+        for (int i = 0; i < 10; ++i)
         {
             Vector3 s = targetGo.transform.localScale;
             s.x = (s.x - s_sub);
@@ -51,7 +51,7 @@ public class LoadingMainGameManager : MonoBehaviour
             yield return wait;
         }
         // 돌린다
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             Quaternion r = targetGo.transform.localRotation;
             r.y = (r.y + r_plus);
@@ -70,7 +70,7 @@ public class LoadingMainGameManager : MonoBehaviour
         yield return wait;
         
         // 돌린다
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             Quaternion r = activeGo.transform.localRotation;
             r.y = (r.y - r_plus);
@@ -79,7 +79,7 @@ public class LoadingMainGameManager : MonoBehaviour
         }
         
         // 커진다
-        for (int i = 0; i < 15; ++i)
+        for (int i = 0; i < 10; ++i)
         {
             Vector3 s = activeGo.transform.localScale;
             s.x = (s.x + s_sub);
