@@ -50,6 +50,9 @@ TagManager:
   - name: Foreground
     uniqueID: 2812021021
     locked: 0
+  - name: New Layer 4
+    uniqueID: 3943704419
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1
