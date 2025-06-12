@@ -18,10 +18,12 @@ namespace SHJ
         [SerializeField] private TMP_InputField joinUsername;
         [SerializeField] private TMP_InputField joinPassword;
         
+        [SerializeField] private TextMeshProUGUI loadingMessage;
+        
         private string loginURL = "http://127.0.0.1:8000/api-token-auth/";
         private string joinURL = "http://127.0.0.1:8000/api-auth/create/";
         
-        private struct Token
+        public struct Token
         {
             public string token;
             public Token(string token)
@@ -30,7 +32,7 @@ namespace SHJ
             }
         }
         
-        private Token sToken = new Token();
+        public Token sToken = new Token();
         
         public void Login()
         {
@@ -51,8 +53,18 @@ namespace SHJ
             if (res.result == UnityWebRequest.Result.Success)
             {
                 sToken = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                loadingMessage.text = "login success";
+                yield return new WaitForSeconds(1f);
+                
+                loadingMessage.text = "data loading...";
+                yield return new WaitForSeconds(2f);
                 loginCallback?.Invoke();
             }
+            else
+            {
+                loadingMessage.text = "login fail";
+            }
+
         }
 
         public void OnJoin()

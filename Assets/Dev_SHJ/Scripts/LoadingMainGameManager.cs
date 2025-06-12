@@ -1,4 +1,5 @@
 using System.Collections;
+using CSH;
 using SHJ;
 using UnityEngine;
 
@@ -24,6 +25,9 @@ public class LoadingMainGameManager : MonoBehaviour
     {
         loading.SetActive(false);
         main1.SetActive(true);
+        GameMainFirst gameMainFirst = main1.GetComponent<GameMainFirst>();
+        GameLoading gameLoding = loading.GetComponent<GameLoading>();
+        gameMainFirst.GetDataRequest(gameLoding.sToken.token);
     }
 
     public void OnClickRotateItemList(bool b)
@@ -92,54 +96,4 @@ public class LoadingMainGameManager : MonoBehaviour
         activeGo.transform.localScale = originS;
         activeGo.transform.localRotation = originRot;
     }
-
-    // private IEnumerator LoopScaleRotate(bool b)
-    // {
-    //     GameObject targetGo = b ? itemListGo : rankListGo;  // disable target
-    //     GameObject activeGo = !b ? itemListGo : rankListGo;  // enable target
-    //     
-    //     Vector3 originS = Vector3.one;
-    //     Quaternion originRot = Quaternion.identity;
-    //     
-    //     Vector3 s = targetGo.transform.localScale;
-    //     float t = Time.deltaTime * 10;
-    //     float r = targetGo.transform.rotation.y;
-    //     for (int i = 0; i < 80; ++i)
-    //     {
-    //         if (i <= 10)
-    //         {
-    //             targetGo.transform.localScale = new Vector3(s.x - t, s.y - t, s.z - t);
-    //             s = targetGo.transform.localScale;
-    //         }
-    //         else
-    //         {
-    //             targetGo.transform.Rotate(new Vector3(0, r + 2f, 0));
-    //         }
-    //         yield return null;
-    //     }
-    //
-    //     activeGo.transform.localScale = targetGo.transform.localScale;
-    //     activeGo.transform.localRotation = targetGo.transform.localRotation;
-    //     
-    //     targetGo.transform.localScale = originS;
-    //     targetGo.transform.localRotation = originRot;
-    //     targetGo.transform.parent.gameObject.SetActive(false);
-    //     
-    //     activeGo.transform.parent.gameObject.SetActive(true);
-    //     for (int i = 0; i < 80; ++i)
-    //     {
-    //         if (i <= 10)
-    //         {
-    //             activeGo.transform.localScale = new Vector3(s.x + t, s.y + t, s.z + t);
-    //             s = activeGo.transform.localScale;
-    //         }
-    //         else
-    //         {
-    //             activeGo.transform.Rotate(new Vector3(0, r - 2f, 0));
-    //         }
-    //         yield return null;
-    //     }
-    //     activeGo.transform.localScale = originS;
-    //     activeGo.transform.localRotation = originRot;
-    // }
 }
