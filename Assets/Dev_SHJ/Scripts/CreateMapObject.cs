@@ -37,6 +37,7 @@ namespace SHJ
             
             GameObject cloneLand = Instantiate(land, targetMap.transform);
             SpriteRenderer spr = cloneLand.GetComponent<SpriteRenderer>();
+            BoxCollider2D bc2 = cloneLand.GetComponent<BoxCollider2D>();
             float xDis = (spr.size.x * 100);
             float startX = (xDis * 0.5f * cloneLand.transform.localScale.x) - 3f;
             targetMap.transform.position = new Vector3(
@@ -44,6 +45,8 @@ namespace SHJ
                 targetMap.transform.position.y, 
                 targetMap.transform.position.z
                 );
+            
+            bc2.size = new Vector2(xDis, spr.size.y);
             spr.size = new Vector2(xDis, spr.size.y);
 
             float x = 0;
