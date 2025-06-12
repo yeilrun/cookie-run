@@ -8,19 +8,20 @@ namespace SHJ
 {
     public class GameLoading : MonoBehaviour
     {
+        public delegate void LoginCallback();
+        public static event LoginCallback loginCallback;
+        
         [SerializeField] private TMP_InputField username;
         [SerializeField] private TMP_InputField password;
 
-        private string loginURL = "http://hjsondev.iptime.org:8080/api/token/";
+        private string loginURL = "http://127.0.0.1:8000/api-token-auth/";
         
         private struct Token
         {
-            public string access;
-            public string refresh;
-            public Token(string access, string refresh)
+            public string token;
+            public Token(string token)
             {
-                this.access = access;
-                this.refresh = refresh;
+                this.token = token;
             }
         }
         
@@ -45,6 +46,7 @@ namespace SHJ
             if (res.result == UnityWebRequest.Result.Success)
             {
                 sToken = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                loginCallback?.Invoke();
             }
         }
     }
