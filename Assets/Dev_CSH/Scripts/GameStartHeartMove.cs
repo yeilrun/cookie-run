@@ -12,7 +12,7 @@ namespace CSH
 
         public void Start()
         {
-            transform.position+=Vector3.down*fallspeed*Time.deltaTime;
+        //      transform.position+=Vector3.down*fallspeed*Time.deltaTime;
         }
 
         public void Update()
