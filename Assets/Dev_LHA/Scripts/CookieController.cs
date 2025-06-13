@@ -1,9 +1,13 @@
+using System.Collections;
 using UnityEngine;
 
 namespace LHA
 {
     public class CookieController : MonoBehaviour
     {
+        public delegate void OnCookieIsClashCallback(GameObject cookie, GameObject target);
+        public static OnCookieIsClashCallback onCookieIsClashCallback;
+
         private LayerMask groundLayer;
         private int jumpCount = 0;
         private float jumpTime = 0f;
@@ -13,12 +17,15 @@ namespace LHA
         private float startY = 0f;
 
         private Animator animator;
+        private SpriteRenderer spriteRenderer;
+        
         private bool isDead = false;
 
         private void Start()
         {
             groundLayer = LayerMask.GetMask("Ground");
             animator = GetComponent<Animator>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
             animator.SetBool("Grounded", false);
         }
 
@@ -31,11 +38,9 @@ namespace LHA
             Sliding();
         }
 
-        private void Die()
+        public void Die()
         {
             animator.SetTrigger("Die");
-
-           //playerRigidbody.linearVelocity = Vector2.zero;
             isDead = true;
         }
 
@@ -46,16 +51,18 @@ namespace LHA
                 Die();
             }
 
-            if (other.gameObject.name.Contains("wall"))
+            if (other.tag == "wall")
             {
                 animator.SetBool("Clash", true);
+                StartCoroutine(Blink());
             }
 
+            onCookieIsClashCallback?.Invoke(gameObject, other.gameObject);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.gameObject.name.Contains("wall"))
+            if (other.tag == "wall")
             {
                 animator.SetBool("Clash", false);
             }
@@ -120,6 +127,25 @@ namespace LHA
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.01f, groundLayer);
             return hit.collider != null;
         }
+
+        private IEnumerator Blink()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Color c = spriteRenderer.color;
+                c.a = 0.3f;
+                spriteRenderer.color = c;
+
+                yield return new WaitForSeconds(0.2f);
+
+                c.a = 1f;
+                spriteRenderer.color = c;
+
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+
 
     }
 }
