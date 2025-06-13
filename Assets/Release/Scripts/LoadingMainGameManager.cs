@@ -2,6 +2,7 @@ using System.Collections;
 using CSH;
 using SHJ;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LoadingMainGameManager : MonoBehaviour
 {
@@ -97,5 +98,10 @@ public class LoadingMainGameManager : MonoBehaviour
         
         activeGo.transform.localScale = originS;
         activeGo.transform.localRotation = originRot;
+    }
+
+    public void OnClickGamePlayScene()
+    {
+        SceneManager.LoadScene("ReleaseGamePlayScene");
     }
 }
