@@ -29,21 +29,6 @@ public class ReadmeEditor: Editor
         GUILayout.Space(16);
         GUILayout.Label("스크립트 파일 네임스페이스", m_HeadingStyle);
         GUILayout.Label("namespace 이니셜 {}", m_BodyStyle);
-        
-        GUILayout.Space(16);
-        GUILayout.Label("시작로딩 카메라 시야", m_HeadingStyle);
-        SerializedProperty gameStartCamera = serializedObject.FindProperty("gameStartCamera");
-        gameStartCamera.stringValue = EditorGUILayout.TextArea(gameStartCamera.stringValue, EditorStyles.textArea);
-        
-        GUILayout.Space(16);
-        GUILayout.Label("메인1 카메라 시야", m_HeadingStyle);
-        SerializedProperty gameMain1Camera = serializedObject.FindProperty("gameMain1Camera");
-        gameMain1Camera.stringValue = EditorGUILayout.TextArea(gameMain1Camera.stringValue, EditorStyles.textArea);
-
-        GUILayout.Space(16);
-        GUILayout.Label("메인2 카메라 시야", m_HeadingStyle);
-        SerializedProperty gameMain2Camera = serializedObject.FindProperty("gameMain2Camera");
-        gameMain2Camera.stringValue = EditorGUILayout.TextArea(gameMain2Camera.stringValue, EditorStyles.textArea);
 
         GUILayout.Space(16);
         GUILayout.Label("게임플레이 카메라 시야", m_HeadingStyle);
