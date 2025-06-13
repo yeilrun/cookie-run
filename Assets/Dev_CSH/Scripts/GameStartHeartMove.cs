@@ -1,20 +1,36 @@
 using UnityEngine;
+using UnityEngine.UI;
+
 
 namespace CSH
 {
     public class GameStartHeartMove : MonoBehaviour
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        [SerializeField]public float fallspeed;
+        [SerializeField]public float groundY;
+        [SerializeField] private bool isfalling;
+
+        public void Start()
         {
-            
+        //      transform.position+=Vector3.down*fallspeed*Time.deltaTime;
         }
 
-        // Update is called once per frame
-        void Update()
+        public void Update()
         {
-            
-        }
-    }
+            if (isfalling)
+            {
+                Vector3 currentPosition = transform.position;
+               // transform.position+=Vector3.down*fallspeed*Time.deltaTime;
+                currentPosition.y-=fallspeed*Time.deltaTime;
+                transform.position=currentPosition;
+
+                if (transform.position.y<=groundY)
+                {
+                    transform.position=new Vector3(currentPosition.x, groundY, currentPosition.z);
+                    Destroy(gameObject);
+                    isfalling=false;
+                }
+            }
+        } 
+     }
 }
-
