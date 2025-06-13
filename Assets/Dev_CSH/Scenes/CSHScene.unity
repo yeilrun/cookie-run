@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallspeed: 10
-  groundY: 2
+  groundY: 0
   isfalling: 0
 --- !u!1 &1341938513
 GameObject:
