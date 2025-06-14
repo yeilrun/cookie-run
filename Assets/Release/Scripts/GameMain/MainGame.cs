@@ -49,28 +49,35 @@ namespace SHJ
 
         private string saveToken = "";
 
-        private void OnEnable()
-        {
-            GameMainSecond.playLoadingMainSecond += CustomPlayLoading;
-        }
-
-        private void OnDisable()
-        {
-            GameMainSecond.playLoadingMainSecond -= CustomPlayLoading;
-        }
-
         private void Start()
         {
             StartCoroutine(GetData(saveToken));
         }
-
+        
+        // On public
+        public void OnClickOptionModal()
+        {
+            optionModalGo.SetActive(true);
+        }
+        
+        public void OnOptionClose()
+        {
+            optionModalGo.SetActive(false);
+        }
+        
         public void OnClickRotateItemList(bool b)
         {
             GameObject targetGo = b ? itemListGo : rankListGo; // disable target
             GameObject activeGo = !b ? itemListGo : rankListGo; // enable target
             StartCoroutine(LoopScaleRotate(targetGo, activeGo));
         }
-
+        
+        public void OnClickGamePlayScene()
+        {
+            StartCoroutine(CustomPlayLoading());
+        }
+        
+        // private IEnumerator
         private IEnumerator GetData(string token)
         {
             UnityWebRequest res = UnityWebRequest.Get(rankGetURL);
@@ -90,12 +97,40 @@ namespace SHJ
                 }
             }
         }
-
-        public void OnOptionClose()
+        
+        private IEnumerator CustomPlayLoading()
         {
-            optionModalGo.SetActive(false);
-        }
+            int randomIdx = Random.Range(1, 4);
+            playLoadingGo.SetActive(true);
+            FieldInfo sp = GetType().GetField($"loadingImg{randomIdx}", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo cookiePos = GetType()
+                .GetField($"cookiePosToImg{randomIdx}", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo mesPos = GetType().GetField($"messagePosToImg{randomIdx}",
+                BindingFlags.NonPublic | BindingFlags.Instance);
 
+            RectTransform[] playloadingGo_message_cookie = playLoadingGo.GetComponentsInChildren<RectTransform>();
+            Image img = playloadingGo_message_cookie[0].GetComponent<Image>();
+            TextMeshProUGUI tmp = playloadingGo_message_cookie[1].GetComponent<TextMeshProUGUI>();
+
+            if (sp != null && mesPos != null)
+            {
+                img.sprite = (Sprite)sp.GetValue(this);
+                playloadingGo_message_cookie[1].anchoredPosition = (Vector2)mesPos.GetValue(this);
+                tmp.text = "한번 달려 볼까!!";
+            }
+
+            if (cookiePos != null)
+            {
+                playloadingGo_message_cookie[2].anchoredPosition = (Vector2)cookiePos.GetValue(this);
+            }
+
+            yield return new WaitForSeconds(3f);
+            main2.SetActive(false);
+            topMain.SetActive(false);
+            playLoadingGo.SetActive(false);
+            SceneManager.LoadScene("ReleaseGamePlayScene");
+        }
+        
         private IEnumerator LoopScaleRotate(GameObject targetGo, GameObject activeGo)
         {
             Vector3 originS = Vector3.one;
@@ -156,38 +191,8 @@ namespace SHJ
             activeGo.transform.localScale = originS;
             activeGo.transform.localRotation = originRot;
         }
-
-        private IEnumerator CustomPlayLoading()
-        {
-            int randomIdx = Random.Range(1, 4);
-            playLoadingGo.SetActive(true);
-            FieldInfo sp = GetType().GetField($"loadingImg{randomIdx}", BindingFlags.NonPublic | BindingFlags.Instance);
-            FieldInfo cookiePos = GetType()
-                .GetField($"cookiePosToImg{randomIdx}", BindingFlags.NonPublic | BindingFlags.Instance);
-            FieldInfo mesPos = GetType().GetField($"messagePosToImg{randomIdx}",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-
-            RectTransform[] playloadingGo_message_cookie = playLoadingGo.GetComponentsInChildren<RectTransform>();
-            Image img = playloadingGo_message_cookie[0].GetComponent<Image>();
-            TextMeshProUGUI tmp = playloadingGo_message_cookie[1].GetComponent<TextMeshProUGUI>();
-
-            if (sp != null && mesPos != null)
-            {
-                img.sprite = (Sprite)sp.GetValue(this);
-                playloadingGo_message_cookie[1].anchoredPosition = (Vector2)mesPos.GetValue(this);
-                tmp.text = "한번 달려 볼까!!";
-            }
-
-            if (cookiePos != null)
-            {
-                playloadingGo_message_cookie[2].anchoredPosition = (Vector2)cookiePos.GetValue(this);
-            }
-
-            yield return new WaitForSeconds(3f);
-            main2.SetActive(false);
-            topMain.SetActive(false);
-            playLoadingGo.SetActive(false);
-            SceneManager.LoadScene("ReleaseGamePlayScene");
-        }
+        
+        
+        
     }
 }
