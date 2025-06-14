@@ -11,7 +11,7 @@ namespace LHA
         private LayerMask groundLayer;
         private int jumpCount = 0;
         private float jumpTime = 0f;
-        private float jumpVelocity = 7f;
+        [SerializeField] private float jumpVelocity = 10f;
         private float gravity = -25f;
         private bool isJumping = false;
         private float startY = 0f;

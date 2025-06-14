@@ -25,9 +25,8 @@ namespace SHJ
 
         [SerializeField] private GameObject playLoadingGo;
 
-        [Header("Play loading")] [SerializeField]
-        private Sprite loadingImg1;
-
+        [Header("Play loading")] 
+        [SerializeField] private Sprite loadingImg1;
         [SerializeField] private Vector2 messagePosToImg1;
         [SerializeField] private Vector2 cookiePosToImg1;
 
@@ -47,11 +46,9 @@ namespace SHJ
             public int score;
         }
 
-        private string saveToken = "";
-
         private void Start()
         {
-            StartCoroutine(GetData(saveToken));
+            StartCoroutine(GetData(SingletonManager.sToken.token));
         }
         
         // On public
@@ -125,9 +122,6 @@ namespace SHJ
             }
 
             yield return new WaitForSeconds(3f);
-            main2.SetActive(false);
-            topMain.SetActive(false);
-            playLoadingGo.SetActive(false);
             SceneManager.LoadScene("ReleaseGamePlayScene");
         }
         
