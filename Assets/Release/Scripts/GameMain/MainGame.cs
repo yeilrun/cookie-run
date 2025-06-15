@@ -48,7 +48,7 @@ namespace SHJ
 
         private void Start()
         {
-            StartCoroutine(GetData(SingletonManager.sToken.token));
+            StartCoroutine(GetData(SingletonManager.Instance.Token));
         }
         
         // On public

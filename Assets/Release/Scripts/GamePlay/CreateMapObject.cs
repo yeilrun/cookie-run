@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,32 +8,34 @@ namespace SHJ
     {
         [Header("지형"), SerializeField] private GameObject landPrefab;
         [Header("젤리"), SerializeField] private GameObject jellyPrefab;
-        [Header("밑에있는 장애물 작은거"), SerializeField] private BoxCollider2D wallSmallB = null;
-        // [Header("밑에있는 장애물 큰거"), SerializeField] private BoxCollider2D wall_Land_Large = null;
+        [Header("밑에있는 장애물 작은거"), SerializeField] private SpriteRenderer wallSmallB = null;
+        [Header("밑에있는 장애물 큰거"), SerializeField] private SpriteRenderer wallLargeB = null;
         // [Header("위에있는 장애물 작은거"), SerializeField] private BoxCollider2D wall_Sky_Small = null;
         // [Header("위에있는 장애물 큰거"), SerializeField] private BoxCollider2D wall_Sky_Large = null;
 
-        [SerializeField, Range(1, 2)] private float moveSpeed = 2f;
+        [SerializeField, Range(1, 5)] private float moveSpeed = 3f;
 
         private int[] landWidths = new int[]
         {
-            14, -2, 6, -2, 4, -2, 2, -2, 16, -2, 16, -2, 16
+            10, 6, 6, -2, 4, -2, 12, -2, 12, -2, 16, -2, 16
         };
         
         // 지형과 젤리 거리
         private float jHeight = 1.2f;
         
         // 젤리와 젤리 거리
-        private float jOffset = 1f;
+        private float jOffset = 1.5f;
 
         // 랜드 생성후 젤리 생성 위치 오프셋
         private int jellyStart = 4;
         
         // 맵 길이
         // private int mapDistance = 200;
+        float plusX = 0;
         
         // 부모로 사용할 게임 오브젝트
         private GameObject targetMap = null;
+        private GameObject targetMapRolling = null;
         
         private void Start()
         {
@@ -41,9 +44,30 @@ namespace SHJ
 
         private void Update()
         {
-            if (targetMap != null)
+            if (targetMap.transform.position.x <= -plusX)
             {
-                targetMap.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
+                Vector2 offset = new Vector2(plusX * 2f, 0);
+                targetMap.transform.position = (Vector2)targetMap.transform.position + offset;
+                Transform[] arr = targetMap.GetComponentsInChildren<Transform>(true);
+                StartCoroutine(JellySetActive(arr));
+            }
+            else if (targetMapRolling.transform.position.x <= -plusX)
+            {
+                Vector2 offset = new Vector2(plusX * 2f, 0);
+                targetMapRolling.transform.position = (Vector2)targetMapRolling.transform.position + offset;
+                Transform[] arr = targetMapRolling.GetComponentsInChildren<Transform>(true);
+                StartCoroutine(JellySetActive(arr));
+            }
+            targetMap.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
+            targetMapRolling.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
+        }
+
+        private IEnumerator JellySetActive(Transform[] arr)
+        {
+            foreach (Transform obj in arr)
+            {
+                obj.gameObject.SetActive(true);
+                yield return null;
             }
         }
 
@@ -57,6 +81,11 @@ namespace SHJ
             List<Vector2> jellyPosXY = WallInit(jellyPosX);
             // 젤리 생성
             JellyInit(jellyPosXY);
+
+            Vector2 rollingMapPos = new Vector2(
+                plusX, 
+                targetMap.transform.position.y);
+            targetMapRolling = Instantiate(targetMap, rollingMapPos, Quaternion.identity);
         }
 
         private List<Vector2> GroundInit()
@@ -68,7 +97,6 @@ namespace SHJ
             SpriteRenderer originSprite = landPrefab.GetComponent<SpriteRenderer>();
             float startX = jellyStart;
             
-            float plusX = 0;
             List<Vector2> jellyPosX = new List<Vector2>();
             for (int i = 0; i < landWidths.Length; ++i)
             {
@@ -95,9 +123,13 @@ namespace SHJ
                     while (startX < plusX)
                     {
                         Vector2 addPos = new Vector2(startX, 0f);
-                        if (landWidths[i] >= 16 && idx != 0 && idx % 5 == 0)
+                        if (landWidths[i] == 6 && idx != 0 && idx % 3 == 0)
                         {
                             addPos.y = 1f;
+                        }
+                        else if (landWidths[i] == 12 && idx != 0 && idx % 4 == 0)
+                        {
+                            addPos.y = 2f;
                         }
                         jellyPosX.Add(addPos);
                         startX += jOffset;
@@ -126,10 +158,45 @@ namespace SHJ
                 if (v.y > 0f && v.y <= 1f)
                 {
                     Instantiate(wallSmallB, new Vector2(v.x, originSprite.bounds.max.y), Quaternion.identity, targetMap.transform);
+                    jp.y = originSprite.bounds.max.y + (wallSmallB.bounds.max.y * 0.25f) + jHeight;
+                    jp.x = (v.x - (jOffset * 0.55f));
+                    result.Add(jp);
+                    jp.x = (v.x + (jOffset * 0.55f));
+                    result.Add(jp);
+                    
+                    jp.y = originSprite.bounds.max.y + wallSmallB.bounds.max.y + jHeight;
+                    jp.x = (v.x - (jOffset * 0.25f));
+                    result.Add(jp);
+                    jp.x = (v.x + (jOffset * 0.25f));
+                    result.Add(jp);
+                }
+                else if (v.y > 1f && v.y <= 2f)
+                {
+                    Instantiate(wallLargeB, new Vector2(v.x, originSprite.bounds.max.y), Quaternion.identity, targetMap.transform);
+                    jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.15f) + jHeight;
+                    jp.x = (v.x - (jOffset * 0.8f));
+                    result.Add(jp);
+                    jp.x = (v.x + (jOffset * 0.8f));
+                    result.Add(jp);
+                    
+                    jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.6f) + jHeight;
+                    jp.x = (v.x - (jOffset * 0.5f));
+                    result.Add(jp);
+                    jp.x = (v.x + (jOffset * 0.5f));
+                    result.Add(jp);
+                    
+                    jp.y = originSprite.bounds.max.y + wallLargeB.bounds.max.y + jHeight;
+                    jp.x = (v.x - (jOffset * 0.25f));
+                    result.Add(jp);
+                    jp.x = (v.x + (jOffset * 0.25f));
+                    result.Add(jp);
+                }
+                else
+                {
+                    jp.y = landPrefab.transform.position.y + jHeight;
+                    result.Add(jp);
                 }
 
-                jp.y = landPrefab.transform.position.y + jHeight;
-                result.Add(jp);
             }
             return result;
         }

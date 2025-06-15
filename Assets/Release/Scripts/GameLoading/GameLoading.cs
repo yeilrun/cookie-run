@@ -25,6 +25,15 @@ namespace SHJ
         private string loginURL = "http://127.0.0.1:8000/api-token-auth/";
         private string joinURL = "http://127.0.0.1:8000/api-auth/create/";
         
+        private struct Token
+        {
+            public string token;
+            public Token(string token)
+            {
+                this.token = token;
+            }
+        }
+        
         public void Login()
         {
             if (loginUsername.text != string.Empty && loginPassword.text != string.Empty)
@@ -47,7 +56,9 @@ namespace SHJ
             if (res.result == UnityWebRequest.Result.Success)
             {
                 
-                SingletonManager.sToken = JsonConvert.DeserializeObject<SingletonManager.Token>(res.downloadHandler.text);
+                Token t = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                SingletonManager.Instance.Token = t.token;
+                // SingletonManager.Instance.userInfo.upgrades.Add("SelectJelly");
                 loadingMessage.text = "login success";
                 yield return new WaitForSeconds(1f);
                 
