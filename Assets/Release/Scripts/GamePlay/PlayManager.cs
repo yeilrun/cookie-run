@@ -9,7 +9,12 @@ public class PlayManager : MonoBehaviour
     [SerializeField] private CookieController cookieCon;
 
     [SerializeField] private TextMeshProUGUI myScoreText;
+    [SerializeField] private TextMeshProUGUI nextScoreText;
+    [SerializeField] private TextMeshProUGUI nextRankText;
+    [SerializeField] private TextMeshProUGUI nextUserText;
+    
     private int myScore = 0;
+    private int nextScoreIdx = 0;
     
     private void OnEnable()
     {
@@ -21,6 +26,18 @@ public class PlayManager : MonoBehaviour
     {
         CookieController.onCookieIsClashCallback -= CustomCookieIsClashCallback;
         HealthGageBar.onFillAmountIsZeroCallback -= CustomOnFillAmountIsZeroCallback;
+    }
+
+    private void Start()
+    {
+        nextScoreIdx = SingletonManager.Instance.rankDatas != null ? SingletonManager.Instance.rankDatas.Count - 1 : 0;
+        if (nextScoreIdx != 0)
+        {
+            string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas?[nextScoreIdx].score);
+            nextScoreText.text = nextscore;
+            nextUserText.text = SingletonManager.Instance.rankDatas?[nextScoreIdx].username;
+            nextRankText.text = (nextScoreIdx + 1).ToString() + "등";
+        }
     }
 
     private void CustomCookieIsClashCallback(GameObject cookie, GameObject target)
@@ -51,6 +68,22 @@ public class PlayManager : MonoBehaviour
             target.SetActive(false);
             myScore += SingletonManager.Instance.userInfo.upgrades.GetValueOrDefault("SelectJelly", 0);
             myScoreText.text = string.Format("{0:#,###}", myScore);
+
+            if (SingletonManager.Instance.rankDatas?[nextScoreIdx].score < myScore)
+            {
+                if (nextScoreIdx != 0)
+                {
+                    nextScoreIdx -= 1;
+                    string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas?[nextScoreIdx].score);
+                    nextScoreText.text = nextscore;
+                    nextUserText.text = SingletonManager.Instance.rankDatas?[nextScoreIdx].username;
+                    nextRankText.text = (nextScoreIdx + 1).ToString() + "등";
+                }
+                else
+                {
+                    nextScoreText.text = string.Format("{0:#,###}", myScore);
+                }
+            }
         }
     }
 

@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -38,17 +35,9 @@ namespace SHJ
         [SerializeField] private Vector2 messagePosToImg3;
         [SerializeField] private Vector2 cookiePosToImg3;
 
-        private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
-
-        public class RankDataType
-        {
-            public string username;
-            public int score;
-        }
-
         private void Start()
         {
-            StartCoroutine(GetData(SingletonManager.Instance.Token));
+            StartCoroutine(SingletonManager.Instance.GetData(rankData, contentView));
         }
         
         // On public
@@ -75,25 +64,6 @@ namespace SHJ
         }
         
         // private IEnumerator
-        private IEnumerator GetData(string token)
-        {
-            UnityWebRequest res = UnityWebRequest.Get(rankGetURL);
-            res.SetRequestHeader("Authorization", $"Token {token}");
-            yield return res.SendWebRequest();
-
-            if (res.result == UnityWebRequest.Result.Success)
-            {
-                List<RankDataType> datas = JsonConvert.DeserializeObject<List<RankDataType>>(res.downloadHandler.text);
-                foreach (RankDataType data in datas)
-                {
-                    GameObject d = Instantiate(rankData, contentView.transform);
-                    TextMeshProUGUI[] tmps = d.GetComponentsInChildren<TextMeshProUGUI>();
-                    tmps[0].text = (datas.IndexOf(data) + 1).ToString();
-                    tmps[1].text = data.username;
-                    tmps[2].text = string.Format("{0:#,###}", data.score);
-                }
-            }
-        }
         
         private IEnumerator CustomPlayLoading()
         {
