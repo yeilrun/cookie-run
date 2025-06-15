@@ -9,7 +9,8 @@ namespace LHA
         public delegate void OnFillAmountIsZeroCallback();
         public static event OnFillAmountIsZeroCallback onFillAmountIsZeroCallback;
 
-        private Image IMG;
+        public Image IMG;
+        
         [SerializeField] private int maxHP = 500;
         [SerializeField] private int persecondHP = 4;
         private float ratio = 0f;

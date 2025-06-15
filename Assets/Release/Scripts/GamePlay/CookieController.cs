@@ -11,8 +11,8 @@ namespace LHA
         private LayerMask groundLayer;
         private int jumpCount = 0;
         private float jumpTime = 0f;
-        private float jumpVelocity = 7f;
-        private float gravity = -25f;
+        [SerializeField] private float jumpVelocity = 11f;
+        [SerializeField] private float gravity = -25f;
         private bool isJumping = false;
         private float startY = 0f;
 
@@ -46,11 +46,6 @@ namespace LHA
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.tag == "Dead" && !isDead)
-            {
-                Die();
-            }
-
             if (other.tag == "wall")
             {
                 animator.SetBool("Clash", true);

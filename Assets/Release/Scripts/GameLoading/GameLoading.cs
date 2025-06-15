@@ -3,27 +3,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 namespace SHJ
 {
     public class GameLoading : MonoBehaviour
     {
-        public delegate void LoginCallback();
-        public static event LoginCallback loginCallback;
-        
+        [Header("Form")] 
+        [SerializeField] private GameObject LoginFormGo;
         [SerializeField] private TMP_InputField loginUsername;
         [SerializeField] private TMP_InputField loginPassword;
-        
         [SerializeField] private GameObject joinGo;
+        
+        [Header("Message")]
+        [SerializeField] private TextMeshProUGUI loadingMessage;
+        
+        [Header("Join Area")]
         [SerializeField] private TMP_InputField joinUsername;
         [SerializeField] private TMP_InputField joinPassword;
-        
-        [SerializeField] private TextMeshProUGUI loadingMessage;
         
         private string loginURL = "http://127.0.0.1:8000/api-token-auth/";
         private string joinURL = "http://127.0.0.1:8000/api-auth/create/";
         
-        public struct Token
+        private struct Token
         {
             public string token;
             public Token(string token)
@@ -31,8 +33,6 @@ namespace SHJ
                 this.token = token;
             }
         }
-        
-        public Token sToken = new Token();
         
         public void Login()
         {
@@ -50,21 +50,37 @@ namespace SHJ
             UnityWebRequest res = UnityWebRequest.Post(loginURL, form);
             yield return res.SendWebRequest();
 
+            LoginFormGo.SetActive(false);
+            loadingMessage.gameObject.SetActive(true);
+            
             if (res.result == UnityWebRequest.Result.Success)
             {
-                sToken = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                
+                Token t = JsonConvert.DeserializeObject<Token>(res.downloadHandler.text);
+                SingletonManager.Instance.Token = t.token;
+                // SingletonManager.Instance.userInfo.upgrades.Add("SelectJelly");
                 loadingMessage.text = "login success";
                 yield return new WaitForSeconds(1f);
                 
+                loadingMessage.text = "data loading.";
+                yield return new WaitForSeconds(1f);
+                loadingMessage.text = "data loading..";
+                yield return new WaitForSeconds(1f);
                 loadingMessage.text = "data loading...";
-                yield return new WaitForSeconds(2f);
-                loginCallback?.Invoke();
+                yield return new WaitForSeconds(1f);
+                
+                loadingMessage.text = "Success !!";
+                yield return new WaitForSeconds(1f);
+                
+                SceneManager.LoadScene("ReleaseGameMainScene");
             }
             else
             {
                 loadingMessage.text = "login fail";
+                yield return new WaitForSeconds(1f);
+                LoginFormGo.SetActive(true);
+                loadingMessage.gameObject.SetActive(false);
             }
-
         }
 
         public void OnJoin()
@@ -98,7 +114,6 @@ namespace SHJ
             if (res.result == UnityWebRequest.Result.Success)
             {
                 joinGo.SetActive(false);
-                Debug.Log("success");
             }
         }
     }

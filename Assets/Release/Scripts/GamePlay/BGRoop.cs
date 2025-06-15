@@ -5,12 +5,12 @@ namespace LHA
     public class BGRoop : MonoBehaviour
     {
         private float width;
-        private float speed = 0.3f;
+        private float speed = 3f;
 
         private void Awake()
         {
             BoxCollider2D backgroundCollider = GetComponent<BoxCollider2D>();
-            width = backgroundCollider.size.x;
+            width = backgroundCollider.bounds.size.x;
         }
 
         private void Update()
@@ -19,7 +19,7 @@ namespace LHA
             {
                 Reposition();
             }
-            transform.Translate(Vector3.left * speed * Time.deltaTime);
+            transform.Translate( speed * Time.deltaTime * Vector3.left);
         }
         private void Reposition()
         {
