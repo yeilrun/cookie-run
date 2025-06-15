@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class SingletonManager : MonoBehaviour
 {
@@ -32,6 +34,12 @@ public class SingletonManager : MonoBehaviour
         {
             token = value;
         }
+    }
+    
+    public class RankDataType
+    {
+        public string username;
+        public int score;
     }
     
     private void Awake()
@@ -93,6 +101,7 @@ public class SingletonManager : MonoBehaviour
 
     public IEnumerator SendScore(int score)
     {
+        Time.timeScale = 1f;
         WWWForm form = new WWWForm();
         form.AddField("score", score);
         UnityWebRequest res = UnityWebRequest.Post("http://localhost:8000/rank/add/", form);
@@ -102,6 +111,30 @@ public class SingletonManager : MonoBehaviour
         if (res.result == UnityWebRequest.Result.Success)
         {
             Debug.Log(res.downloadHandler.text);
+        }
+        
+        SceneManager.LoadScene("ReleaseGameMainScene");
+    }
+    
+    private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
+    public List<RankDataType> rankDatas = null;
+
+    public IEnumerator GetData(GameObject rankData, GameObject contentView)
+    {
+        UnityWebRequest res = UnityWebRequest.Get(rankGetURL);
+        res.SetRequestHeader("Authorization", $"Token {token}");
+        yield return res.SendWebRequest();
+        if (res.result == UnityWebRequest.Result.Success)
+        {
+            rankDatas = JsonConvert.DeserializeObject<List<RankDataType>>(res.downloadHandler.text);
+            foreach (RankDataType data in rankDatas)
+            {
+                GameObject d = Instantiate(rankData, contentView.transform);
+                TextMeshProUGUI[] tmps = d.GetComponentsInChildren<TextMeshProUGUI>();
+                tmps[0].text = (rankDatas.IndexOf(data) + 1).ToString();
+                tmps[1].text = data.username;
+                tmps[2].text = string.Format("{0:#,###}", data.score);
+            }
         }
     }
 }

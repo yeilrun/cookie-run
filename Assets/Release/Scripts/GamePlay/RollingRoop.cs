@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace LHA
 {
-    public class BGRoop : MonoBehaviour
+    public class RollingRoop : MonoBehaviour
     {
+        [SerializeField] private float speed = 3f;
         private float width;
-        private float speed = 3f;
 
         private void Awake()
         {
