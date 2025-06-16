@@ -71,6 +71,7 @@ public class PlayManager : MonoBehaviour
 
         if (target.CompareTag("BigPotion"))
         {
+            target.SetActive(false);
             hpbar.InduceHP(40);
         }
 
@@ -81,7 +82,6 @@ public class PlayManager : MonoBehaviour
 
         if (target.CompareTag("Dead"))
         {
-            Debug.Log("dead gogo");
             StartCoroutine(cookieCon.CameraShake(0.5f, 0.1f));
             hpbar.ReduceHP(500);
             CustomOnFillAmountIsZeroCallback();
@@ -149,6 +149,7 @@ public class PlayManager : MonoBehaviour
         keepGoingButton.gameObject.SetActive(false);
         stopGameButton.gameObject.SetActive(false);
         pauseIMG.gameObject.SetActive(false);
+        Time.timeScale = 1f;
         SceneManager.LoadScene("ReleaseGameResultScene");
     }
 }

@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 public class SingletonManager : MonoBehaviour
 {
@@ -20,26 +19,6 @@ public class SingletonManager : MonoBehaviour
             }
             return instance;
         }
-    }
-    
-    private string token = string.Empty;
-
-    public string Token
-    {
-        get
-        {
-            return token;
-        }
-        set
-        {
-            token = value;
-        }
-    }
-    
-    public class RankDataType
-    {
-        public string username;
-        public int score;
     }
     
     private void Awake()
@@ -59,6 +38,26 @@ public class SingletonManager : MonoBehaviour
             userInfo = new UserInfo();
         }
     }
+    
+    // server URL
+#if UNITY_EDITOR
+    
+    public string loginURL = "http://127.0.0.1:8000/api-token-auth/";
+    public string joinURL = "http://127.0.0.1:8000/api-auth/create/";
+    private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
+    private string sendScoreURL = "http://127.0.0.1:8000/rank/add/";
+    
+# else
+
+    public string loginURL = "http://hjsondev.iptime.org:8000/api-token-auth/";
+    public string joinURL = "http://hjsondev.iptime.org:8000/api-auth/create/";
+    private string rankGetURL = "http://hjsondev.iptime.org:8000/rank/list/";
+    private string sendScoreURL = "http://hjsondev.iptime.org:8000/rank/add/";
+    
+# endif
+    
+    // game loading scene
+    public string token = string.Empty;
 
     public class UserInfo
     {
@@ -98,31 +97,19 @@ public class SingletonManager : MonoBehaviour
     }
 
     public UserInfo userInfo = null;
-    public int saveMyScore = 0;
-
-    public IEnumerator SendScore(int score)
+    
+    // main scene
+    public class RankDataType
     {
-        saveMyScore = score;
-        Time.timeScale = 1f;
-        WWWForm form = new WWWForm();
-        form.AddField("score", score);
-        UnityWebRequest res = UnityWebRequest.Post("http://localhost:8000/rank/add/", form);
-        res.SetRequestHeader("Authorization", $"Token {token}");
-        yield return res.SendWebRequest();
-
-        if (res.result == UnityWebRequest.Result.Success)
-        {
-            Debug.Log(res.downloadHandler.text);
-        }
-        
-        // SceneManager.LoadScene("ReleaseGameMainScene");
+        public string username;
+        public int score;
     }
     
-    private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
     public List<RankDataType> rankDatas = null;
 
     public IEnumerator GetData(GameObject rankData, GameObject contentView)
     {
+        Debug.Log(token);
         UnityWebRequest res = UnityWebRequest.Get(rankGetURL);
         res.SetRequestHeader("Authorization", $"Token {token}");
         yield return res.SendWebRequest();
@@ -139,4 +126,26 @@ public class SingletonManager : MonoBehaviour
             }
         }
     }
+    
+    // play scene
+    public IEnumerator SendScore(int score)
+    {
+        saveMyScore = score;
+        Time.timeScale = 1f;
+        WWWForm form = new WWWForm();
+        form.AddField("score", score);
+        UnityWebRequest res = UnityWebRequest.Post(sendScoreURL, form);
+        res.SetRequestHeader("Authorization", $"Token {token}");
+        yield return res.SendWebRequest();
+
+        if (res.result == UnityWebRequest.Result.Success)
+        {
+            Debug.Log(res.downloadHandler.text);
+        }
+        
+        // SceneManager.LoadScene("ReleaseGameMainScene");
+    }
+    
+    // result scene
+    public int saveMyScore = 0;
 }
