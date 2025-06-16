@@ -22,6 +22,8 @@ namespace SHJ
 
         [SerializeField] private GameObject playLoadingGo;
 
+        [SerializeField] private GameObject targetItemInsetGo;
+
         [Header("Play loading")] 
         [SerializeField] private Sprite loadingImg1;
         [SerializeField] private Vector2 messagePosToImg1;
@@ -155,8 +157,36 @@ namespace SHJ
             activeGo.transform.localScale = originS;
             activeGo.transform.localRotation = originRot;
         }
-        
-        
+
+        public void ClickTargetItem(GameObject targetGo)
+        {
+            Transform[] trs = targetItemInsetGo.GetComponentsInChildren<Transform>();
+            for (int i = 0; i < trs.Length; ++i)
+            {
+                if (i != 0)
+                {
+                    Destroy(trs[i].gameObject);
+                }
+            }
+
+            GameObject go = new GameObject();
+            go.transform.SetParent(targetItemInsetGo.transform);
+            go.transform.localPosition = Vector3.zero;
+            Image[] targetImgs = targetGo.GetComponentsInChildren<Image>();
+            for (int i = 0; i < 2; ++i)
+            {
+                GameObject g = new GameObject();
+                Image addImg = g.AddComponent<Image>();
+                g.transform.localScale = new Vector3(2, 2, 2);
+                addImg.sprite = targetImgs[i].sprite;
+                addImg.color = targetImgs[i].color;
+                g.transform.SetParent(go.transform);
+                g.transform.localPosition = Vector3.zero;
+                go = g;
+            }
+            
+            
+        }
         
     }
 }
