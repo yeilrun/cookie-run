@@ -48,7 +48,7 @@ public class PlayManager : MonoBehaviour
             if (hpbar.IMG.fillAmount <= 0)
             {
                 cookieCon.Die();
-                Time.timeScale = 0f;
+                // Time.timeScale = 0f; 원상 복구 값 1
                 StartCoroutine(SingletonManager.Instance.SendScore(myScore));
             }
         }
@@ -90,5 +90,7 @@ public class PlayManager : MonoBehaviour
     private void CustomOnFillAmountIsZeroCallback()
     {
         cookieCon.Die();
+        // Time.timeScale = 0f;
+        StartCoroutine(SingletonManager.Instance.SendScore(myScore));
     }
 }
