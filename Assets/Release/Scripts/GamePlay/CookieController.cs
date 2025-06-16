@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LHA
 {
@@ -11,37 +12,47 @@ namespace LHA
         private LayerMask groundLayer;
         private int jumpCount = 0;
         private float jumpTime = 0f;
-        [SerializeField] private float jumpVelocity = 11f;
-        [SerializeField] private float gravity = -25f;
+        private float jumpVelocity = 13f;
+        private float gravity = -40f;
         private bool isJumping = false;
         private float startY = 0f;
 
         private Animator animator;
         private SpriteRenderer spriteRenderer;
+        private Camera cam;
+
+        private Vector3 cameraOriginalPos;
         
         private bool isDead = false;
 
+        private float originY = 0f;
+
         private void Start()
         {
+            originY = transform.position.y;
             groundLayer = LayerMask.GetMask("Ground");
             animator = GetComponent<Animator>();
+            //GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator.SetBool("Grounded", false);
+            cam = Camera.main;
+            cameraOriginalPos = cam.transform.position;
         }
 
         private void Update()
         {
-            if (isDead)
-                return;
+            if (isDead) return;
 
-            Jumping();
+            bool isHitDead = Grounding();
+            Jumping(isHitDead);
             Sliding();
+
         }
 
         public void Die()
         {
-            animator.SetTrigger("Die");
             isDead = true;
+            animator.SetTrigger("Die");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -50,6 +61,7 @@ namespace LHA
             {
                 animator.SetBool("Clash", true);
                 StartCoroutine(Blink());
+                StartCoroutine(CameraShake(0.3f, 0.1f));
             }
 
             onCookieIsClashCallback?.Invoke(gameObject, other.gameObject);
@@ -77,7 +89,7 @@ namespace LHA
             }
         }
 
-        private void Jumping()
+        private void Jumping(bool _isHitDead)
         {
             if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 2)
             {
@@ -87,6 +99,11 @@ namespace LHA
                 isJumping = true;
                 animator.SetBool("Grounded", false);
                 animator.SetTrigger("Jump");
+
+                if (jumpCount == 2)
+                {
+                    animator.SetTrigger("DoubleJump");
+                }
             }
 
             if (isJumping)
@@ -95,20 +112,15 @@ namespace LHA
                 float newY = startY + jumpVelocity * jumpTime + 0.5f * gravity * Mathf.Pow(jumpTime, 2);
                 transform.position = new Vector2(transform.position.x, newY);
 
-                if (gravity * jumpTime + jumpVelocity <= 0f && Grounding())
+                if (gravity * jumpTime + jumpVelocity <= 0f && _isHitDead)
                 {
-                    transform.position = new Vector2(transform.position.x, transform.position.y);
+                    transform.position = new Vector2(transform.position.x, originY);
                     //transform.position = new Vector2(transform.position.x, Mathf.Round(transform.position.y * 100f) / 100f);
                     isJumping = false;
                 }
             }
 
-            if (jumpCount == 2)
-            {
-                animator.SetTrigger("DoubleJump");
-            }
-
-            if (!isJumping && Grounding())
+            if (!isJumping && _isHitDead)
             {
                 jumpCount = 0;
                 animator.SetBool("Grounded", true);
@@ -119,7 +131,14 @@ namespace LHA
 
         private bool Grounding()
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.01f, groundLayer);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, groundLayer);
+
+            if (!isJumping && hit.collider == null)
+            {
+                Vector2 v2 = new Vector2(transform.position.x, transform.position.y + (Vector2.down.y * Time.deltaTime * 10f));
+                transform.position = v2;
+            }
+
             return hit.collider != null;
         }
 
@@ -140,6 +159,20 @@ namespace LHA
             }
         }
 
+        public IEnumerator CameraShake(float duration, float magnitude)
+        {
+            float timer = 0;
+
+            while (timer <= duration)
+            {
+                cam.transform.localPosition = Random.insideUnitSphere * magnitude + cameraOriginalPos;
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            cam.transform.localPosition = cameraOriginalPos;
+        }
 
 
     }

@@ -9,6 +9,7 @@ TagManager:
   - SmallPotion
   - floor
   - Jelly
+  - Dead
   layers:
   - Default
   - TransparentFX

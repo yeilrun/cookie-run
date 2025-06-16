@@ -86,7 +86,7 @@ public class SingletonManager : MonoBehaviour
         // 업그레이드 현황
         public Dictionary<string, int> upgrades = new Dictionary<string, int>()
         {
-            {"SelectJelly", 10},
+            {"SelectJelly", 875},
         };
         
         // 부스트 보유 현황
@@ -98,9 +98,11 @@ public class SingletonManager : MonoBehaviour
     }
 
     public UserInfo userInfo = null;
+    public int saveMyScore = 0;
 
     public IEnumerator SendScore(int score)
     {
+        saveMyScore = score;
         Time.timeScale = 1f;
         WWWForm form = new WWWForm();
         form.AddField("score", score);
