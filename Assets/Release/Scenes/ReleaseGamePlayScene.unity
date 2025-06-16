@@ -995,6 +995,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 736530017}
   m_CullTransparentMesh: 1
+--- !u!1 &815446057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 815446059}
+  - component: {fileID: 815446058}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &815446058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815446057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ff4d38a1cf8d4ace8b484f372d891a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loginURL: http://127.0.0.1:8000/api-token-auth/
+  joinURL: http://127.0.0.1:8000/api-auth/create/
+  token: 
+  saveMyScore: 0
+--- !u!4 &815446059
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815446057}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &922869938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,6 +1268,7 @@ MonoBehaviour:
   jellyPrefab: {fileID: 503627582621207275, guid: 6bab30eddbbae8441af592281ef45f69, type: 3}
   wallSmallB: {fileID: 7217489684232292623, guid: 8c0b179c79342ae4bad20a4ab7c748cb, type: 3}
   wallLargeB: {fileID: 5300892532641471640, guid: 86d8d1de0d0d01f4e9be78a71ec9500f, type: 3}
+  bigPotion: {fileID: 8934581944882631578, guid: 34cdbfd698b6ce447b0c27daffc874f6, type: 3}
   moveSpeed: 7
 --- !u!4 &1013857382
 Transform:
@@ -3152,3 +3201,4 @@ SceneRoots:
   - {fileID: 1715188789}
   - {fileID: 1013857382}
   - {fileID: 1548128457}
+  - {fileID: 815446059}

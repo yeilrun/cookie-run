@@ -148,6 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff4d38a1cf8d4ace8b484f372d891a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginURL: http://hjsondev.iptime.org:8080/api-token-auth/
+  joinURL: http://hjsondev.iptime.org:8080/api-auth/create/
+  rankGetURL: http://hjsondev.iptime.org:8080/rank/list/
+  sendScoreURL: http://hjsondev.iptime.org:8080/rank/add/
+  token: 
+  saveMyScore: 0
 --- !u!4 &10700861
 Transform:
   m_ObjectHideFlags: 0
