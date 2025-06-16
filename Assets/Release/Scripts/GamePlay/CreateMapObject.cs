@@ -13,7 +13,7 @@ namespace SHJ
         // [Header("위에있는 장애물 작은거"), SerializeField] private BoxCollider2D wall_Sky_Small = null;
         // [Header("위에있는 장애물 큰거"), SerializeField] private BoxCollider2D wall_Sky_Large = null;
 
-        [SerializeField, Range(1, 5)] private float moveSpeed = 3f;
+        [SerializeField, Range(1, 10)] private float moveSpeed = 3f;
 
         private int[] landWidths = new int[]
         {
@@ -21,10 +21,10 @@ namespace SHJ
         };
         
         // 지형과 젤리 거리
-        private float jHeight = 1.2f;
+        private float jHeight = 2f;
         
         // 젤리와 젤리 거리
-        private float jOffset = 1.5f;
+        private float jOffset = 1f;
 
         // 랜드 생성후 젤리 생성 위치 오프셋
         private int jellyStart = 4;
@@ -36,7 +36,9 @@ namespace SHJ
         // 부모로 사용할 게임 오브젝트
         private GameObject targetMap = null;
         private GameObject targetMapRolling = null;
-        
+
+        public static bool isActive = true;
+
         private void Start()
         {
             MapInit();
@@ -44,22 +46,26 @@ namespace SHJ
 
         private void Update()
         {
-            if (targetMap.transform.position.x <= -plusX)
+            if (isActive)
             {
-                Vector2 offset = new Vector2(plusX * 2f, 0);
-                targetMap.transform.position = (Vector2)targetMap.transform.position + offset;
-                Transform[] arr = targetMap.GetComponentsInChildren<Transform>(true);
-                StartCoroutine(JellySetActive(arr));
+                if (targetMap.transform.position.x <= -plusX)
+                {
+                    Vector2 offset = new Vector2(plusX * 2f, 0);
+                    targetMap.transform.position = (Vector2)targetMap.transform.position + offset;
+                    Transform[] arr = targetMap.GetComponentsInChildren<Transform>(true);
+                    StartCoroutine(JellySetActive(arr));
+                }
+                else if (targetMapRolling.transform.position.x <= -plusX)
+                {
+                    Vector2 offset = new Vector2(plusX * 2f, 0);
+                    targetMapRolling.transform.position = (Vector2)targetMapRolling.transform.position + offset;
+                    Transform[] arr = targetMapRolling.GetComponentsInChildren<Transform>(true);
+                    StartCoroutine(JellySetActive(arr));
+                }
+                targetMap.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
+                targetMapRolling.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
             }
-            else if (targetMapRolling.transform.position.x <= -plusX)
-            {
-                Vector2 offset = new Vector2(plusX * 2f, 0);
-                targetMapRolling.transform.position = (Vector2)targetMapRolling.transform.position + offset;
-                Transform[] arr = targetMapRolling.GetComponentsInChildren<Transform>(true);
-                StartCoroutine(JellySetActive(arr));
-            }
-            targetMap.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
-            targetMapRolling.transform.position += (Time.deltaTime * moveSpeed * Vector3.left);
+
         }
 
         private IEnumerator JellySetActive(Transform[] arr)

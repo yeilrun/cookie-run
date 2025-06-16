@@ -38,6 +38,7 @@ namespace SHJ
         private void Start()
         {
             StartCoroutine(SingletonManager.Instance.GetData(rankData, contentView));
+            Time.timeScale = 1f;
         }
         
         // On public

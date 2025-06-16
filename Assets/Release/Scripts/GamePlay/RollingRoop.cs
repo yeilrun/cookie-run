@@ -7,6 +7,8 @@ namespace LHA
         [SerializeField] private float speed = 3f;
         private float width;
 
+        public static bool isActive = true;
+
         private void Awake()
         {
             BoxCollider2D backgroundCollider = GetComponent<BoxCollider2D>();
@@ -15,11 +17,14 @@ namespace LHA
 
         private void Update()
         {
-            if (transform.position.x <= -width)
+            if (isActive)
             {
-                Reposition();
+                if (transform.position.x <= -width)
+                {
+                    Reposition();
+                }
+                transform.Translate( speed * Time.deltaTime * Vector3.left);
             }
-            transform.Translate( speed * Time.deltaTime * Vector3.left);
         }
         private void Reposition()
         {
