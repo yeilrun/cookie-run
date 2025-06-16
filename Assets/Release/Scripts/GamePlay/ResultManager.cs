@@ -14,7 +14,7 @@ namespace LHA
         private void Start()
         {
             score = SingletonManager.Instance.saveMyScore;
-            scoreText.text = string.Format("{0:#,###} ¡°", score);
+            scoreText.text = string.Format("{0:#,###} Ï†ê", score);
         }
 
         public void OnClickOkButton()

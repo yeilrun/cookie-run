@@ -115,7 +115,7 @@ public class SingletonManager : MonoBehaviour
             Debug.Log(res.downloadHandler.text);
         }
         
-        SceneManager.LoadScene("ReleaseGameMainScene");
+        // SceneManager.LoadScene("ReleaseGameMainScene");
     }
     
     private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
