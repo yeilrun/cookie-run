@@ -1,12 +1,21 @@
+using System.Collections;
 using System.Collections.Generic;
 using LHA;
+using SHJ;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class PlayManager : MonoBehaviour
 {
     [SerializeField] private HealthGageBar hpbar;
     [SerializeField] private CookieController cookieCon;
+    [SerializeField] private Button pauseButton;
+    [SerializeField] private Button keepGoingButton;
+    [SerializeField] private Button stopGameButton;
+    [SerializeField] private Image pauseIMG;
 
     [SerializeField] private TextMeshProUGUI myScoreText;
     [SerializeField] private TextMeshProUGUI nextScoreText;
@@ -30,6 +39,13 @@ public class PlayManager : MonoBehaviour
 
     private void Start()
     {
+        CreateMapObject.isActive = true;
+        RollingRoop.isActive = true;
+        pauseButton.onClick.AddListener(OnClickpauseButton);
+        keepGoingButton.gameObject.SetActive(false);
+        stopGameButton.gameObject.SetActive(false);
+        pauseIMG.gameObject.SetActive(false);
+
         nextScoreIdx = SingletonManager.Instance.rankDatas != null ? SingletonManager.Instance.rankDatas.Count - 1 : 0;
         if (nextScoreIdx != 0)
         {
@@ -45,12 +61,12 @@ public class PlayManager : MonoBehaviour
         if (target.CompareTag("wall"))
         {
             hpbar.ReduceHP(40);
-            if (hpbar.IMG.fillAmount <= 0)
-            {
-                cookieCon.Die();
-                // Time.timeScale = 0f; 원상 복구 값 1
-                StartCoroutine(SingletonManager.Instance.SendScore(myScore));
-            }
+            //if (hpbar.IMG.fillAmount <= 0)
+            //{
+            //    cookieCon.Die();
+            //    // Time.timeScale = 0f; 원상 복구 값 1
+            //    StartCoroutine(SingletonManager.Instance.SendScore(myScore));
+            //}
         }
 
         if (target.CompareTag("BigPotion"))
@@ -61,6 +77,14 @@ public class PlayManager : MonoBehaviour
         if (target.CompareTag("SmallPotion"))
         {
             hpbar.InduceHP(10);
+        }
+
+        if (target.CompareTag("Dead"))
+        {
+            Debug.Log("dead gogo");
+            StartCoroutine(cookieCon.CameraShake(0.5f, 0.1f));
+            hpbar.ReduceHP(500);
+            CustomOnFillAmountIsZeroCallback();
         }
 
         if (target.CompareTag("Jelly"))
@@ -90,7 +114,41 @@ public class PlayManager : MonoBehaviour
     private void CustomOnFillAmountIsZeroCallback()
     {
         cookieCon.Die();
-        // Time.timeScale = 0f;
+        CreateMapObject.isActive = false;
+        RollingRoop.isActive = false;
         StartCoroutine(SingletonManager.Instance.SendScore(myScore));
+        //SceneManager.LoadScene("ReleaseGameResultScene");
+        StartCoroutine(DieMoveEndLoadScene());
+    }
+
+    private IEnumerator DieMoveEndLoadScene()
+    {
+        yield return new WaitForSeconds(2f);
+
+        SceneManager.LoadScene("ReleaseGameResultScene");
+    }
+
+    public void OnClickpauseButton()
+    {
+        Time.timeScale = 0f;
+        keepGoingButton.gameObject.SetActive(true);
+        stopGameButton.gameObject.SetActive(true);
+        pauseIMG.gameObject.SetActive(true);
+    }
+
+    public void OnClickKeepGoingButton()
+    {
+        keepGoingButton.gameObject.SetActive(false);
+        stopGameButton.gameObject.SetActive(false);
+        pauseIMG.gameObject.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void OnClickStopGameButton()
+    {
+        keepGoingButton.gameObject.SetActive(false);
+        stopGameButton.gameObject.SetActive(false);
+        pauseIMG.gameObject.SetActive(false);
+        SceneManager.LoadScene("ReleaseGameResultScene");
     }
 }
