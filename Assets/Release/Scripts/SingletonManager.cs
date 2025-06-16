@@ -42,22 +42,28 @@ public class SingletonManager : MonoBehaviour
     // server URL
 #if UNITY_EDITOR
     
-    public string loginURL = "http://127.0.0.1:8000/api-token-auth/";
-    public string joinURL = "http://127.0.0.1:8000/api-auth/create/";
-    private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
-    private string sendScoreURL = "http://127.0.0.1:8000/rank/add/";
+    // public string loginURL = "http://127.0.0.1:8000/api-token-auth/";
+    // public string joinURL = "http://127.0.0.1:8000/api-auth/create/";
+    // private string rankGetURL = "http://127.0.0.1:8000/rank/list/";
+    // private string sendScoreURL = "http://127.0.0.1:8000/rank/add/";
+    
+    public string loginURL = "http://hjsondev.iptime.org:8080/api-token-auth/";
+    public string joinURL = "http://hjsondev.iptime.org:8080/api-auth/create/";
+    public string rankGetURL = "http://hjsondev.iptime.org:8080/rank/list/";
+    public string sendScoreURL = "http://hjsondev.iptime.org:8080/rank/add/";
     
 # else
 
-    public string loginURL = "http://hjsondev.iptime.org:8000/api-token-auth/";
-    public string joinURL = "http://hjsondev.iptime.org:8000/api-auth/create/";
-    private string rankGetURL = "http://hjsondev.iptime.org:8000/rank/list/";
-    private string sendScoreURL = "http://hjsondev.iptime.org:8000/rank/add/";
+    public string loginURL = "http://hjsondev.iptime.org:8080/api-token-auth/";
+    public string joinURL = "http://hjsondev.iptime.org:8080/api-auth/create/";
+    public string rankGetURL = "http://hjsondev.iptime.org:8080/rank/list/";
+    public string sendScoreURL = "http://hjsondev.iptime.org:8080/rank/add/";
     
 # endif
     
     // game loading scene
     public string token = string.Empty;
+    public string username = string.Empty;
 
     public class UserInfo
     {

@@ -88,6 +88,7 @@ namespace SHJ
             {
                 TokenType t = JsonConvert.DeserializeObject<TokenType>(res.downloadHandler.text);
                 SingletonManager.Instance.token = t.token;
+                SingletonManager.Instance.username = username;
                 // SingletonManager.Instance.userInfo.upgrades.Add("SelectJelly");
                 loadingMessage.text = "login success";
                 yield return new WaitForSeconds(1f);
