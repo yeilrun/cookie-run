@@ -46,13 +46,19 @@ public class PlayManager : MonoBehaviour
         stopGameButton.gameObject.SetActive(false);
         pauseIMG.gameObject.SetActive(false);
 
-        nextScoreIdx = SingletonManager.Instance.rankDatas != null ? SingletonManager.Instance.rankDatas.Count - 1 : 0;
-        if (nextScoreIdx != 0)
+        if (SingletonManager.Instance.rankDatas != null && SingletonManager.Instance.rankDatas.Count > 0)
         {
-            string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas?[nextScoreIdx].score);
+            nextScoreIdx = SingletonManager.Instance.rankDatas.Count - 1;
+            string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas[nextScoreIdx].score);
             nextScoreText.text = nextscore;
-            nextUserText.text = SingletonManager.Instance.rankDatas?[nextScoreIdx].username;
+            nextUserText.text = SingletonManager.Instance.rankDatas[nextScoreIdx].username;
             nextRankText.text = (nextScoreIdx + 1).ToString() + "등";
+        }
+        else
+        {
+            nextScoreText.text = "0";
+            nextUserText.text = SingletonManager.Instance.username;
+            nextRankText.text = "1등";
         }
     }
 
@@ -71,6 +77,7 @@ public class PlayManager : MonoBehaviour
 
         if (target.CompareTag("BigPotion"))
         {
+            target.SetActive(false);
             hpbar.InduceHP(40);
         }
 
@@ -81,7 +88,6 @@ public class PlayManager : MonoBehaviour
 
         if (target.CompareTag("Dead"))
         {
-            Debug.Log("dead gogo");
             StartCoroutine(cookieCon.CameraShake(0.5f, 0.1f));
             hpbar.ReduceHP(500);
             CustomOnFillAmountIsZeroCallback();
@@ -93,7 +99,9 @@ public class PlayManager : MonoBehaviour
             myScore += SingletonManager.Instance.userInfo.upgrades.GetValueOrDefault("SelectJelly", 0);
             myScoreText.text = string.Format("{0:#,###}", myScore);
 
-            if (SingletonManager.Instance.rankDatas?[nextScoreIdx].score < myScore)
+            if (SingletonManager.Instance.rankDatas != null && 
+                SingletonManager.Instance.rankDatas.Count > 0 && 
+                SingletonManager.Instance.rankDatas[nextScoreIdx].score < myScore)
             {
                 if (nextScoreIdx != 0)
                 {
@@ -117,7 +125,7 @@ public class PlayManager : MonoBehaviour
         CreateMapObject.isActive = false;
         RollingRoop.isActive = false;
         StartCoroutine(SingletonManager.Instance.SendScore(myScore));
-        //SceneManager.LoadScene("ReleaseGameResultScene");
+        HealthGageBar.onFillAmountIsZeroCallback -= CustomOnFillAmountIsZeroCallback;
         StartCoroutine(DieMoveEndLoadScene());
     }
 
@@ -149,6 +157,7 @@ public class PlayManager : MonoBehaviour
         keepGoingButton.gameObject.SetActive(false);
         stopGameButton.gameObject.SetActive(false);
         pauseIMG.gameObject.SetActive(false);
+        Time.timeScale = 1f;
         SceneManager.LoadScene("ReleaseGameResultScene");
     }
 }
