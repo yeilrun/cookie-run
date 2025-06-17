@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,10 @@ namespace SHJ
         [SerializeField] private Vector2 messagePosToImg3;
         [SerializeField] private Vector2 cookiePosToImg3;
 
+        [Header("Audio Clip")] 
+        [SerializeField] private List<AudioClip> audioClips = null;
+        [SerializeField] private AudioSource audioPlayCom;
+        
         private delegate void HeartMove();
         private HeartMove heartMove;
         
@@ -77,6 +82,8 @@ namespace SHJ
         // main1 -> main2 event btn
         public void OnClickRotateItemList(bool b)
         {
+            audioPlayCom.clip = audioClips[0];
+            audioPlayCom.Play();
             GameObject targetGo = b ? itemListGo : rankListGo; // disable target
             GameObject activeGo = !b ? itemListGo : rankListGo; // enable target
             StartCoroutine(LoopScaleRotate(targetGo, activeGo));
