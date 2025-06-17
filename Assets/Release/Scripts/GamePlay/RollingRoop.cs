@@ -11,7 +11,7 @@ namespace LHA
 
         private void Awake()
         {
-            BoxCollider2D backgroundCollider = GetComponent<BoxCollider2D>();
+            SpriteRenderer backgroundCollider = GetComponent<SpriteRenderer>();
             width = backgroundCollider.bounds.size.x;
         }
 

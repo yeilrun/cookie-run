@@ -15,7 +15,7 @@ namespace SHJ
 
         [SerializeField] private GameObject bigPotion;
 
-        [SerializeField, Range(1, 10)] private float moveSpeed = 3f;
+        [SerializeField, Range(1, 10)] private float moveSpeed = 5f;
 
         private int[] landWidths = new int[]
         {
@@ -82,6 +82,8 @@ namespace SHJ
             }
         }
 
+        private float mapOffsetX = 355.8f;
+
         private void MapInit()
         {
             targetMap = new GameObject();
@@ -94,8 +96,10 @@ namespace SHJ
             // 젤리 생성
             JellyInit(jellyPosXY);
 
+            targetMap.transform.position = new Vector3(mapOffsetX, targetMap.transform.position.y);
+            
             Vector2 rollingMapPos = new Vector2(
-                plusX + (landWidths[0] * (originSprite.bounds.size.x)) * 0.5f, 
+                mapOffsetX + plusX + (landWidths[0] * (originSprite.bounds.size.x)) * 0.5f, 
                 targetMap.transform.position.y);
             targetMapRolling = Instantiate(targetMap, rollingMapPos, Quaternion.identity);
         }
