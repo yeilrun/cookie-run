@@ -44,6 +44,8 @@ namespace SHJ
         [Header("Audio Clip")] 
         [SerializeField] private List<AudioClip> audioClips = null;
         [SerializeField] private AudioSource audioPlayCom;
+
+        private AudioSource myBGAudio;
         
         private delegate void HeartMove();
         private HeartMove heartMove;
@@ -57,6 +59,7 @@ namespace SHJ
 
         private void Start()
         {
+            myBGAudio = GetComponent<AudioSource>();
             heartMove = null;
             // server get data score
             StartCoroutine(SingletonManager.Instance.GetData(rankData, contentView));
@@ -82,8 +85,7 @@ namespace SHJ
         // main1 -> main2 event btn
         public void OnClickRotateItemList(bool b)
         {
-            audioPlayCom.clip = audioClips[0];
-            audioPlayCom.Play();
+            audioPlayCom.PlayOneShot(audioClips[0]);
             GameObject targetGo = b ? itemListGo : rankListGo; // disable target
             GameObject activeGo = !b ? itemListGo : rankListGo; // enable target
             StartCoroutine(LoopScaleRotate(targetGo, activeGo));
@@ -131,6 +133,7 @@ namespace SHJ
         // game play before random display
         private IEnumerator CustomPlayLoading(GameObject startBtn)
         {
+            myBGAudio.mute = true;
             heartMove = () =>
             {
                 heartGo.transform.position = Vector2.Lerp(
@@ -139,6 +142,8 @@ namespace SHJ
                     Time.deltaTime * 2f);
             };
             yield return new WaitForSeconds(2f);
+            
+            audioPlayCom.PlayOneShot(audioClips[3]);
             
             int randomIdx = Random.Range(1, 4);
             playLoadingGo.SetActive(true);
@@ -226,6 +231,26 @@ namespace SHJ
 
             activeGo.transform.localScale = originS;
             activeGo.transform.localRotation = originRot;
+        }
+        
+        public void OnBGMSoundChange(Slider slider)
+        {
+            myBGAudio.volume = slider.value;
+        }
+        
+        public void OnEffectSoundChange(Slider slider)
+        {
+            audioPlayCom.volume = slider.value;
+        }
+        
+        public void OnBGMSoundMute(Toggle togle)
+        {
+            myBGAudio.mute = togle.isOn;
+        }
+        
+        public void OnEffectSoundMute(Toggle togle)
+        {
+            audioPlayCom.mute = togle.isOn;
         }
     }
 }
