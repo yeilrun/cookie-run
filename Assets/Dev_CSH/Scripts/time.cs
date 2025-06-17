@@ -7,8 +7,8 @@ namespace CSH
     public class time : MonoBehaviour
     {
 
-       [SerializeField] public TMP_Text timerText;
-        [SerializeField] public float countdownTime ;
+        [SerializeField] public TMP_Text timerText;
+        [SerializeField] public float countdownTime;
         [SerializeField] private bool timerRunning;
 
         public void Start()
