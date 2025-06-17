@@ -4,13 +4,11 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace SHJ
 {
     public class GameLoading : MonoBehaviour
     {
-        [FormerlySerializedAs("LoginFormGo")]
         [Header("Login Area")] 
         [SerializeField] private GameObject loginFormGo;
         [SerializeField] private TMP_InputField loginUsername;
@@ -23,6 +21,7 @@ namespace SHJ
         [Header("Join Area")]
         [SerializeField] private TMP_InputField joinUsername;
         [SerializeField] private TMP_InputField joinPassword;
+        [SerializeField] private TMP_InputField joinPasswordCheck;
         
         // login click btn
         public void Login()
@@ -50,9 +49,12 @@ namespace SHJ
         // join apply btn
         public void Join()
         {
-            if (joinUsername.text != string.Empty && joinUsername.text != string.Empty)
+            if (joinUsername.text != string.Empty && joinPassword.text != string.Empty)
             {
-                StartCoroutine(JoinRequest(joinUsername.text, joinPassword.text));
+                if (joinPassword.text == joinPasswordCheck.text)
+                {
+                    StartCoroutine(JoinRequest(joinUsername.text, joinPassword.text));
+                }
             }
         }
         

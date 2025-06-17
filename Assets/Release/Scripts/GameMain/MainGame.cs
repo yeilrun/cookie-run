@@ -245,12 +245,12 @@ namespace SHJ
         
         public void OnBGMSoundMute(Toggle togle)
         {
-            myBGAudio.mute = togle.isOn;
+            myBGAudio.mute = !togle.isOn;
         }
         
         public void OnEffectSoundMute(Toggle togle)
         {
-            audioPlayCom.mute = togle.isOn;
+            audioPlayCom.mute = !togle.isOn;
         }
     }
 }
