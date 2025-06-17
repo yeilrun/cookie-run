@@ -6,8 +6,8 @@ namespace LHA
 { 
     public class HealthGageBar : MonoBehaviour
     {
-        public delegate void OnFillAmountIsZeroCallback();
-        public static event OnFillAmountIsZeroCallback onFillAmountIsZeroCallback;
+        public delegate void OnFillAmountIsZeroCallback(bool isStop);
+        public static OnFillAmountIsZeroCallback onFillAmountIsZeroCallback;
 
         public Image IMG;
         
@@ -30,7 +30,7 @@ namespace LHA
                 if (IMG.fillAmount <= 0)
                 {
                     StopAllCoroutines();
-                    onFillAmountIsZeroCallback?.Invoke();
+                    onFillAmountIsZeroCallback?.Invoke(false);
                 }
 
                 yield return new WaitForSeconds(1f);

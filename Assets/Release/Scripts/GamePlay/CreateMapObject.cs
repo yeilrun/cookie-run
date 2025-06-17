@@ -13,25 +13,30 @@ namespace SHJ
         // [Header("위에있는 장애물 작은거"), SerializeField] private BoxCollider2D wall_Sky_Small = null;
         // [Header("위에있는 장애물 큰거"), SerializeField] private BoxCollider2D wall_Sky_Large = null;
 
+        [SerializeField] private GameObject bigPotion;
+
         [SerializeField, Range(1, 10)] private float moveSpeed = 3f;
 
         private int[] landWidths = new int[]
         {
-            10, 6, 6, -2, 4, -2, 12, -2, 12, -2, 16, -2, 16
+            20, -2, 4, -2, 12, -2, 12, -2, 16, -2, 16
         };
         
         // 지형과 젤리 거리
         private float jHeight = 2f;
         
         // 젤리와 젤리 거리
-        private float jOffset = 1f;
+        private float jOffset = 1.5f;
 
         // 랜드 생성후 젤리 생성 위치 오프셋
-        private int jellyStart = 4;
+        private int jellyStart = 10;
         
         // 맵 길이
         // private int mapDistance = 200;
         float plusX = 0;
+        
+        // 왕 물약 위치
+        private float potionPosX = 0f;
         
         // 부모로 사용할 게임 오브젝트
         private GameObject targetMap = null;
@@ -48,14 +53,14 @@ namespace SHJ
         {
             if (isActive)
             {
-                if (targetMap.transform.position.x <= -plusX)
+                if (targetMap.transform.position.x <= (-plusX - jellyStart))
                 {
                     Vector2 offset = new Vector2(plusX * 2f, 0);
                     targetMap.transform.position = (Vector2)targetMap.transform.position + offset;
                     Transform[] arr = targetMap.GetComponentsInChildren<Transform>(true);
                     StartCoroutine(JellySetActive(arr));
                 }
-                else if (targetMapRolling.transform.position.x <= -plusX)
+                else if (targetMapRolling.transform.position.x <= (-plusX - jellyStart))
                 {
                     Vector2 offset = new Vector2(plusX * 2f, 0);
                     targetMapRolling.transform.position = (Vector2)targetMapRolling.transform.position + offset;
@@ -80,27 +85,27 @@ namespace SHJ
         private void MapInit()
         {
             targetMap = new GameObject();
+            SpriteRenderer originSprite = landPrefab.GetComponent<SpriteRenderer>();
             
             // 지형을 그리면서 X 구하기
-            List<Vector2> jellyPosX = GroundInit();
+            List<Vector2> jellyPosX = GroundInit(originSprite);
             // 장애물을 놓으면서 Y 구하기
             List<Vector2> jellyPosXY = WallInit(jellyPosX);
             // 젤리 생성
             JellyInit(jellyPosXY);
 
             Vector2 rollingMapPos = new Vector2(
-                plusX, 
+                plusX + (landWidths[0] * (originSprite.bounds.size.x)) * 0.5f, 
                 targetMap.transform.position.y);
             targetMapRolling = Instantiate(targetMap, rollingMapPos, Quaternion.identity);
         }
 
-        private List<Vector2> GroundInit()
+        private List<Vector2> GroundInit(SpriteRenderer originSprite)
         {
             // 구덩이 갯수에따른 지형 생성 개수 달라짐
             // 하지만 구덩이 생성 패턴이 에피소드마다 다르고 거리마다 같은 패턴이면 안됨
             // 길이값이 들어있는 배열을 받는게 좋을거 같다
             
-            SpriteRenderer originSprite = landPrefab.GetComponent<SpriteRenderer>();
             float startX = jellyStart;
             
             List<Vector2> jellyPosX = new List<Vector2>();
@@ -129,11 +134,11 @@ namespace SHJ
                     while (startX < plusX)
                     {
                         Vector2 addPos = new Vector2(startX, 0f);
-                        if (landWidths[i] == 6 && idx != 0 && idx % 3 == 0)
+                        if (landWidths[i] == 12 && idx != 0 && idx % 6 == 0)
                         {
                             addPos.y = 1f;
                         }
-                        else if (landWidths[i] == 12 && idx != 0 && idx % 4 == 0)
+                        else if (landWidths[i] == 16 && idx != 0 && idx % 8 == 0)
                         {
                             addPos.y = 2f;
                         }
@@ -141,7 +146,6 @@ namespace SHJ
                         startX += jOffset;
                         ++idx;
                     }
-                    
                 }
                 else
                 {
@@ -151,6 +155,7 @@ namespace SHJ
                 }
             }
             
+            potionPosX = startX;
             return jellyPosX;
         }
         
@@ -158,19 +163,20 @@ namespace SHJ
         {
             SpriteRenderer originSprite = landPrefab.GetComponent<SpriteRenderer>();
             List<Vector2> result = new List<Vector2>();
+            Vector2 beforPos = Vector2.zero;
             foreach (Vector2 v in jellyPosX)
             {
                 Vector2 jp = v;
                 if (v.y > 0f && v.y <= 1f)
                 {
                     Instantiate(wallSmallB, new Vector2(v.x, originSprite.bounds.max.y), Quaternion.identity, targetMap.transform);
-                    jp.y = originSprite.bounds.max.y + (wallSmallB.bounds.max.y * 0.25f) + jHeight;
+                    jp.y = originSprite.bounds.max.y + wallSmallB.bounds.max.y + (jOffset * 0.5f);
                     jp.x = (v.x - (jOffset * 0.55f));
                     result.Add(jp);
                     jp.x = (v.x + (jOffset * 0.55f));
                     result.Add(jp);
                     
-                    jp.y = originSprite.bounds.max.y + wallSmallB.bounds.max.y + jHeight;
+                    jp.y = originSprite.bounds.max.y + wallSmallB.bounds.max.y + jOffset;
                     jp.x = (v.x - (jOffset * 0.25f));
                     result.Add(jp);
                     jp.x = (v.x + (jOffset * 0.25f));
@@ -179,22 +185,26 @@ namespace SHJ
                 else if (v.y > 1f && v.y <= 2f)
                 {
                     Instantiate(wallLargeB, new Vector2(v.x, originSprite.bounds.max.y), Quaternion.identity, targetMap.transform);
-                    jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.15f) + jHeight;
-                    jp.x = (v.x - (jOffset * 0.8f));
-                    result.Add(jp);
-                    jp.x = (v.x + (jOffset * 0.8f));
-                    result.Add(jp);
+
+                    if (beforPos != Vector2.zero)
+                    {
+                        jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.2f) + jOffset;
+                        jp.x = beforPos.x + (jOffset * 0.2f);
+                        result.Add(jp);
+                        jp.x = (v.x + (jOffset * 0.8f));
+                        result.Add(jp);
+                    }
                     
-                    jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.6f) + jHeight;
+                    jp.y = originSprite.bounds.max.y + (wallLargeB.bounds.max.y * 0.6f) + jOffset;
                     jp.x = (v.x - (jOffset * 0.5f));
                     result.Add(jp);
                     jp.x = (v.x + (jOffset * 0.5f));
                     result.Add(jp);
                     
-                    jp.y = originSprite.bounds.max.y + wallLargeB.bounds.max.y + jHeight;
-                    jp.x = (v.x - (jOffset * 0.25f));
+                    jp.y = originSprite.bounds.max.y + wallLargeB.bounds.max.y + jOffset;
+                    jp.x = (v.x - (jOffset * 0.2f));
                     result.Add(jp);
-                    jp.x = (v.x + (jOffset * 0.25f));
+                    jp.x = (v.x + (jOffset * 0.2f));
                     result.Add(jp);
                 }
                 else
@@ -202,6 +212,8 @@ namespace SHJ
                     jp.y = landPrefab.transform.position.y + jHeight;
                     result.Add(jp);
                 }
+
+                beforPos = v;
 
             }
             return result;
@@ -213,6 +225,13 @@ namespace SHJ
             {
                 Instantiate(jellyPrefab, p, Quaternion.identity, targetMap.transform);
             }
+            
+            Instantiate(
+                bigPotion, 
+                new Vector2(potionPosX, landPrefab.transform.position.y + jHeight), 
+                Quaternion.identity, 
+                targetMap.transform
+                );
         }
     }
 }
