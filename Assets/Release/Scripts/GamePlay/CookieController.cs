@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace LHA
 {
@@ -19,6 +20,10 @@ namespace LHA
         private Animator animator;
         private SpriteRenderer spriteRenderer;
         private Camera cam;
+        private AudioSource audioSource;
+
+        [SerializeField] AudioClip jumpAudio;
+        [SerializeField] AudioClip slidingAudio;
 
         private Vector3 cameraOriginalPos;
         
@@ -28,11 +33,11 @@ namespace LHA
 
         private void Start()
         {
+            animator = GetComponent<Animator>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            audioSource = GetComponent<AudioSource>();
             originY = transform.position.y;
             groundLayer = LayerMask.GetMask("Ground");
-            animator = GetComponent<Animator>();
-            //GetComponent<Animator>().updateMode = AnimatorUpdateMode.UnscaledTime;
-            spriteRenderer = GetComponent<SpriteRenderer>();
             animator.SetBool("Grounded", false);
             cam = Camera.main;
             cameraOriginalPos = cam.transform.position;
@@ -45,7 +50,6 @@ namespace LHA
             bool isHitDead = Grounding();
             Jumping(isHitDead);
             Sliding();
-
         }
 
         public void Die()
@@ -82,6 +86,11 @@ namespace LHA
                 animator.SetBool("Slide", true);
             }
 
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                audioSource.PlayOneShot(slidingAudio);
+            }
+
             if (Input.GetKeyUp(KeyCode.DownArrow))
             {
                 animator.SetBool("Slide", false);
@@ -98,6 +107,7 @@ namespace LHA
                 isJumping = true;
                 animator.SetBool("Grounded", false);
                 animator.SetTrigger("Jump");
+                audioSource.PlayOneShot(jumpAudio);
 
                 if (jumpCount == 2)
                 {
