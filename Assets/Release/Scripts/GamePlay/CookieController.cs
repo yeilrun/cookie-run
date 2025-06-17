@@ -21,6 +21,7 @@ namespace LHA
         private SpriteRenderer spriteRenderer;
         private Camera cam;
         private AudioSource audioSource;
+        private BoxCollider2D boxCollider;
 
         [SerializeField] AudioClip jumpAudio;
         [SerializeField] AudioClip slidingAudio;
@@ -36,6 +37,7 @@ namespace LHA
             animator = GetComponent<Animator>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             audioSource = GetComponent<AudioSource>();
+            boxCollider = GetComponent<BoxCollider2D>();
             originY = transform.position.y;
             groundLayer = LayerMask.GetMask("Ground");
             animator.SetBool("Grounded", false);
@@ -84,6 +86,7 @@ namespace LHA
             if (Input.GetKey(KeyCode.DownArrow))
             {
                 animator.SetBool("Slide", true);
+                boxCollider.size = new Vector2(1f, 0.4f);
             }
 
             if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -94,6 +97,7 @@ namespace LHA
             if (Input.GetKeyUp(KeyCode.DownArrow))
             {
                 animator.SetBool("Slide", false);
+                boxCollider.size = new Vector2(1f, 1f);
             }
         }
 
