@@ -57,6 +57,11 @@ namespace SHJ
                 }
             }
         }
+
+        public void GuestLogin()
+        {
+            SceneManager.LoadScene("ReleaseGameMainScene");
+        }
         
         /// <summary>
         /// private zone
