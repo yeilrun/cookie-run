@@ -68,6 +68,10 @@ namespace SHJ
         private void Update()
         {
             heartMove?.Invoke();
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                optionModalGo.SetActive(!optionModalGo.activeSelf);
+            }
         }
 
         // click open option btn
@@ -110,20 +114,34 @@ namespace SHJ
             }
 
             GameObject go = new GameObject();
-            go.transform.SetParent(targetItemInsetGo.transform);
+            go.transform.SetParent(targetItemInsetGo.transform, false);
             go.transform.localPosition = Vector3.zero;
             Image[] targetImgs = targetGo.GetComponentsInChildren<Image>();
             for (int i = 0; i < 2; ++i)
             {
                 GameObject g = new GameObject();
                 Image addImg = g.AddComponent<Image>();
-                g.transform.localScale = new Vector3(2, 2, 2);
                 addImg.sprite = targetImgs[i].sprite;
                 addImg.color = targetImgs[i].color;
-                g.transform.SetParent(go.transform);
+                // g.transform.localScale = new Vector2(1.5f, 1.5f);
+                // RectTransform rt = g.GetComponent<RectTransform>();
+                // rt.sizeDelta = new Vector2(
+                //     targetImgs[i].rectTransform.rect.width,
+                //     targetImgs[i].rectTransform.rect.height
+                // );
+                g.transform.SetParent(go.transform, false);
                 g.transform.localPosition = Vector3.zero;
                 go = g;
             }
+        }
+
+        public void GameExit()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
         
         /// <summary>
