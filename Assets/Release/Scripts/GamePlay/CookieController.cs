@@ -144,7 +144,7 @@ namespace LHA
 
         private bool Grounding()
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1f, groundLayer);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, groundLayer);
 
             if (!isJumping && hit.collider == null)
             {
