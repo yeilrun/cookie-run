@@ -10,6 +10,7 @@ TagManager:
   - floor
   - Jelly
   - Dead
+  - BigBearJelly
   layers:
   - Default
   - TransparentFX

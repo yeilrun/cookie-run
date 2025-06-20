@@ -23,6 +23,7 @@ public class PlayManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nextRankText;
     [SerializeField] private TextMeshProUGUI nextUserText;
 
+    [SerializeField] AudioClip bigbearjellyAudio;
     [SerializeField] AudioClip basicjellyAudio;
     [SerializeField] AudioClip bigpotionAudio;
     [SerializeField] AudioClip clashAudio;
@@ -31,9 +32,9 @@ public class PlayManager : MonoBehaviour
     
     private AudioSource audioSource;
 
-
     private int myScore = 0;
     private int nextScoreIdx = 0;
+    private float notTriggerTime=0;
     
     private void OnEnable()
     {
@@ -73,18 +74,29 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (notTriggerTime != 0 && notTriggerTime < 3f)
+        {
+            notTriggerTime += Time.deltaTime;
+        }
+
+        else
+        {
+            notTriggerTime = 0;
+        }
+    }
+
     private void CustomCookieIsClashCallback(GameObject cookie, GameObject target)
     {
-        if (target.CompareTag("wall"))
+        if (target.CompareTag("wall") && notTriggerTime == 0)
         {
+            notTriggerTime = 1f;
             hpbar.ReduceHP(40);
             audioSourceM.PlayOneShot(clashAudio);
-            //if (hpbar.IMG.fillAmount <= 0)
-            //{
-            //    cookieCon.Die();
-            //    // Time.timeScale = 0f; 원상 복구 값 1
-            //    StartCoroutine(SingletonManager.Instance.SendScore(myScore));
-            //}
+            cookieCon.animator.SetBool("Clash", true);
+            StartCoroutine(cookieCon.Blink());
+            StartCoroutine(cookieCon.CameraShake(0.3f, 0.1f));
         }
 
         if (target.CompareTag("BigPotion"))
@@ -106,6 +118,18 @@ public class PlayManager : MonoBehaviour
             CustomOnFillAmountIsZeroCallback(false);
         }
 
+        if (target.CompareTag("BigBearJelly"))
+        {
+            target.GetComponent<Animator>().SetBool("EatBearJelly", true);
+
+            audioSourceM.PlayOneShot(bigbearjellyAudio);
+
+            myScore += 13000;
+            myScoreText.text = string.Format("{0:#,###}", myScore);
+
+            RankSorting();
+        }
+
         if (target.CompareTag("Jelly"))
         {
             audioSourceM.PlayOneShot(basicjellyAudio);
@@ -113,22 +137,27 @@ public class PlayManager : MonoBehaviour
             myScore += SingletonManager.Instance.userInfo.upgrades.GetValueOrDefault("SelectJelly", 0);
             myScoreText.text = string.Format("{0:#,###}", myScore);
 
-            if (SingletonManager.Instance.rankDatas != null && 
-                SingletonManager.Instance.rankDatas.Count > 0 && 
+            RankSorting();
+        }
+    }
+
+    private void RankSorting()
+    {
+        if (SingletonManager.Instance.rankDatas != null &&
+                SingletonManager.Instance.rankDatas.Count > 0 &&
                 SingletonManager.Instance.rankDatas[nextScoreIdx].score < myScore)
+        {
+            if (nextScoreIdx != 0)
             {
-                if (nextScoreIdx != 0)
-                {
-                    nextScoreIdx -= 1;
-                    string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas?[nextScoreIdx].score);
-                    nextScoreText.text = nextscore;
-                    nextUserText.text = SingletonManager.Instance.rankDatas?[nextScoreIdx].username;
-                    nextRankText.text = (nextScoreIdx + 1).ToString() + "등";
-                }
-                else
-                {
-                    nextScoreText.text = string.Format("{0:#,###}", myScore);
-                }
+                nextScoreIdx -= 1;
+                string nextscore = string.Format("{0:#,###}", SingletonManager.Instance.rankDatas?[nextScoreIdx].score);
+                nextScoreText.text = nextscore;
+                nextUserText.text = SingletonManager.Instance.rankDatas?[nextScoreIdx].username;
+                nextRankText.text = (nextScoreIdx + 1).ToString() + "등";
+            }
+            else
+            {
+                nextScoreText.text = string.Format("{0:#,###}", myScore);
             }
         }
     }

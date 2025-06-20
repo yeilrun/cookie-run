@@ -411,7 +411,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1232,6 +1232,7 @@ MonoBehaviour:
   nextScoreText: {fileID: 27657325}
   nextRankText: {fileID: 1732768816}
   nextUserText: {fileID: 1250620017}
+  bigbearjellyAudio: {fileID: 8300000, guid: c3a8d47dec3d73140bc01ed48ade9534, type: 3}
   basicjellyAudio: {fileID: 8300000, guid: 3a865fd02ef9c904a9c809db77c98616, type: 3}
   bigpotionAudio: {fileID: 8300000, guid: f3e8b8c0d7d171d4ea00cb6e5a750647, type: 3}
   clashAudio: {fileID: 8300000, guid: edcba1da186a5694983ccd2346ba9a6e, type: 3}
