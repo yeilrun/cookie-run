@@ -17,7 +17,7 @@ namespace LHA
         private bool isJumping = false;
         private float startY = 0f;
 
-        private Animator animator;
+        public Animator animator;
         private SpriteRenderer spriteRenderer;
         private Camera cam;
         private AudioSource audioSource;
@@ -64,9 +64,7 @@ namespace LHA
         {
             if (other.tag == "wall")
             {
-                animator.SetBool("Clash", true);
-                StartCoroutine(Blink());
-                StartCoroutine(CameraShake(0.3f, 0.1f));
+                
             }
 
             onCookieIsClashCallback?.Invoke(gameObject, other.gameObject);
@@ -155,7 +153,7 @@ namespace LHA
             return hit.collider != null;
         }
 
-        private IEnumerator Blink()
+        public IEnumerator Blink()
         {
             for (int i = 0; i < 5; i++)
             {
